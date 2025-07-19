@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "53136048446",
+    "project_id": "vin-scanner-2f849",
+    "storage_bucket": "vin-scanner-2f849.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53136048446:android:3285b84ceabf7f4f2c2c6f",
+        "android_client_info": {
+          "package_name": "com.autocoach"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVHVj4s557tLo_ADNiNcDZXiAtWHAY5Kc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
