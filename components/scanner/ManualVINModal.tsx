@@ -1,12 +1,17 @@
-/**
- * @component ManualVINModal
- * @description Manual VIN entry modal with validation and user-friendly interface
- * @props ManualVINModalProps - Modal visibility, close handler, and VIN analysis callback
- * @returns JSX.Element - Modal for manual VIN entry with validation
- */
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AnimatedModal } from '../ui/AnimatedModal';
 import { useVINScanner } from '../../hooks/useVINScanner';
@@ -18,26 +23,23 @@ interface ManualVINModalProps {
   onAnalyze: (vin: string) => void;
 }
 
-export const ManualVINModal: React.FC<ManualVINModalProps> = ({ 
-  visible, 
-  onClose, 
-  onAnalyze 
+export const ManualVINModal: React.FC<ManualVINModalProps> = ({
+  visible,
+  onClose,
+  onAnalyze,
 }) => {
   const [vinInput, setVinInput] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const { validateVIN } = useVINScanner();
   const { isLandscape } = useOrientation();
-  
-  // Responsive sizing
+
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
   const modalWidth = Math.min(screenWidth * 0.9, isLandscape ? 700 : 400);
   const modalHeight = isLandscape ? screenHeight * 0.98 : screenHeight * 0.9;
 
   const handleVINChange = (text: string) => {
-    // Convert to uppercase and remove invalid characters
     const cleaned = text.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
-    // Limit to 17 characters
     const limited = cleaned.substring(0, 17);
     setVinInput(limited);
   };
@@ -60,10 +62,13 @@ export const ManualVINModal: React.FC<ManualVINModalProps> = ({
 
     setIsValidating(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500)); // Brief validation delay
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Brief validation delay
       onAnalyze(vinInput);
     } catch {
-      Alert.alert('Error', 'An error occurred while processing the VIN. Please try again.');
+      Alert.alert(
+        'Error',
+        'An error occurred while processing the VIN. Please try again.'
+      );
     } finally {
       setIsValidating(false);
     }
@@ -79,118 +84,160 @@ export const ManualVINModal: React.FC<ManualVINModalProps> = ({
 
   return (
     <AnimatedModal visible={visible} onClose={handleClose}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 25}
       >
-        <View style={[
-          styles.modalContent, 
-          { width: modalWidth, maxHeight: modalHeight },
-          isLandscape && styles.modalContentLandscape
-        ]}>
-          <ScrollView 
+        <View
+          style={[
+            styles.modalContent,
+            { width: modalWidth, maxHeight: modalHeight },
+            isLandscape && styles.modalContentLandscape,
+          ]}
+        >
+          <ScrollView
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             scrollEnabled={!isLandscape}
             style={isLandscape && { flex: 1 }}
-            contentContainerStyle={[styles.scrollContent, isLandscape && styles.scrollContentLandscape]}
+            contentContainerStyle={[
+              styles.scrollContent,
+              isLandscape && styles.scrollContentLandscape,
+            ]}
           >
             {/* Header */}
-            <View style={[styles.header, isLandscape && styles.headerLandscape]}>
+            <View
+              style={[styles.header, isLandscape && styles.headerLandscape]}
+            >
               <Text style={styles.title}>Enter VIN</Text>
-              <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+              <TouchableOpacity
+                onPress={handleClose}
+                style={styles.closeButton}
+              >
                 <Ionicons name="close" size={20} color="#666" />
               </TouchableOpacity>
             </View>
 
-          {/* VIN Input */}
-          <View style={[styles.inputContainer, isLandscape && styles.inputContainerLandscape]}>
-            <TextInput
+            {/* VIN Input */}
+            <View
               style={[
-                styles.vinInput,
-                isValidFormat && styles.vinInputValid,
-                vinInput.length > 0 && !isValidFormat && styles.vinInputInvalid,
-                isLandscape && styles.vinInputLandscape
+                styles.inputContainer,
+                isLandscape && styles.inputContainerLandscape,
               ]}
-              placeholder="Enter 17-digit VIN"
-              placeholderTextColor="#999"
-              value={vinInput}
-              onChangeText={handleVINChange}
-              maxLength={17}
-              autoCapitalize="characters"
-              autoCorrect={false}
-              autoComplete="off"
-              textContentType="none"
-              returnKeyType="done"
-              onSubmitEditing={handleAnalyze}
-              editable={!isValidating}
-            />
-            
-            {/* Character Counter */}
-            <View style={styles.counterContainer}>
-              <Text style={[
-                styles.counter,
-                isValidLength && styles.counterValid
-              ]}>
-                {vinInput.length}/17
-              </Text>
-              {isValidLength && (
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" />
-              )}
-            </View>
-          </View>
-
-          {/* Validation Hints */}
-          <View style={[styles.hintsContainer, isLandscape && styles.hintsContainerLandscape]}>
-            <Text style={styles.hintsTitle}>VIN Requirements:</Text>
-            <View style={styles.hintItem}>
-              <Ionicons 
-                name={vinInput.length === 17 ? "checkmark-circle" : "radio-button-off"} 
-                size={16} 
-                color={vinInput.length === 17 ? "#4CAF50" : "#666"} 
-              />
-              <Text style={[styles.hintText, vinInput.length === 17 && styles.hintTextValid]}>
-                Exactly 17 characters
-              </Text>
-            </View>
-            <View style={styles.hintItem}>
-              <Ionicons 
-                name={isValidFormat ? "checkmark-circle" : "radio-button-off"} 
-                size={16} 
-                color={isValidFormat ? "#4CAF50" : "#666"} 
-              />
-              <Text style={[styles.hintText, isValidFormat && styles.hintTextValid]}>
-                Valid format (no I, O, or Q)
-              </Text>
-            </View>
-          </View>
-
-          {/* Help Text */}
-          <View style={[styles.helpContainer, isLandscape && styles.helpContainerLandscape]}>
-            <Text style={styles.helpText}>
-              VIN can be found on the dashboard, door frame, or vehicle registration
-            </Text>
-          </View>
-
-          {/* Analyze Button */}
-          <View style={isLandscape && styles.analyzeButtonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.analyzeButton,
-                (!isValidFormat || isValidating) && styles.analyzeButtonDisabled,
-                isLandscape && styles.analyzeButtonLandscape
-              ]}
-              onPress={handleAnalyze}
-              disabled={!isValidFormat || isValidating}
             >
-              {isValidating ? (
-                <ActivityIndicator color="white" size="small" />
-              ) : (
-                <Text style={styles.analyzeButtonText}>Analyze VIN</Text>
-              )}
-            </TouchableOpacity>
-          </View>
+              <TextInput
+                style={[
+                  styles.vinInput,
+                  isValidFormat && styles.vinInputValid,
+                  vinInput.length > 0 &&
+                    !isValidFormat &&
+                    styles.vinInputInvalid,
+                  isLandscape && styles.vinInputLandscape,
+                ]}
+                placeholder="Enter 17-digit VIN"
+                placeholderTextColor="#999"
+                value={vinInput}
+                onChangeText={handleVINChange}
+                maxLength={17}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                autoComplete="off"
+                textContentType="none"
+                returnKeyType="done"
+                onSubmitEditing={handleAnalyze}
+                editable={!isValidating}
+              />
+
+              {/* Character Counter */}
+              <View style={styles.counterContainer}>
+                <Text
+                  style={[styles.counter, isValidLength && styles.counterValid]}
+                >
+                  {vinInput.length}/17
+                </Text>
+                {isValidLength && (
+                  <Ionicons name="checkmark-circle" size={16} color="#4CAF50" />
+                )}
+              </View>
+            </View>
+
+            {/* Validation Hints */}
+            <View
+              style={[
+                styles.hintsContainer,
+                isLandscape && styles.hintsContainerLandscape,
+              ]}
+            >
+              <Text style={styles.hintsTitle}>VIN Requirements:</Text>
+              <View style={styles.hintItem}>
+                <Ionicons
+                  name={
+                    vinInput.length === 17
+                      ? 'checkmark-circle'
+                      : 'radio-button-off'
+                  }
+                  size={16}
+                  color={vinInput.length === 17 ? '#4CAF50' : '#666'}
+                />
+                <Text
+                  style={[
+                    styles.hintText,
+                    vinInput.length === 17 && styles.hintTextValid,
+                  ]}
+                >
+                  Exactly 17 characters
+                </Text>
+              </View>
+              <View style={styles.hintItem}>
+                <Ionicons
+                  name={isValidFormat ? 'checkmark-circle' : 'radio-button-off'}
+                  size={16}
+                  color={isValidFormat ? '#4CAF50' : '#666'}
+                />
+                <Text
+                  style={[
+                    styles.hintText,
+                    isValidFormat && styles.hintTextValid,
+                  ]}
+                >
+                  Valid format (no I, O, or Q)
+                </Text>
+              </View>
+            </View>
+
+            {/* Help Text */}
+            <View
+              style={[
+                styles.helpContainer,
+                isLandscape && styles.helpContainerLandscape,
+              ]}
+            >
+              <Text style={styles.helpText}>
+                VIN can be found on the dashboard, door frame, or vehicle
+                registration
+              </Text>
+            </View>
+
+            {/* Analyze Button */}
+            <View style={isLandscape && styles.analyzeButtonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.analyzeButton,
+                  (!isValidFormat || isValidating) &&
+                    styles.analyzeButtonDisabled,
+                  isLandscape && styles.analyzeButtonLandscape,
+                ]}
+                onPress={handleAnalyze}
+                disabled={!isValidFormat || isValidating}
+              >
+                {isValidating ? (
+                  <ActivityIndicator color="white" size="small" />
+                ) : (
+                  <Text style={styles.analyzeButtonText}>Analyze VIN</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -376,4 +423,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ManualVINModal; 
+export default ManualVINModal;

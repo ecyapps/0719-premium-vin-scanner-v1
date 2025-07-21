@@ -1,12 +1,11 @@
-/**
- * @component ScanningTipsModal
- * @description Help modal with scanning tips, visual examples, and best practices
- * @props ScanningTipsModalProps - Modal visibility, close handler, and responsive design
- * @returns JSX.Element - Modal with scanning tips and visual examples
- */
-
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AnimatedModal } from '../ui/AnimatedModal';
 
@@ -17,11 +16,11 @@ interface ScanningTipsModalProps {
   isLandscape: boolean;
 }
 
-export const ScanningTipsModal: React.FC<ScanningTipsModalProps> = ({ 
-  visible, 
-  onClose, 
+export const ScanningTipsModal: React.FC<ScanningTipsModalProps> = ({
+  visible,
+  onClose,
   onStartScanning,
-  isLandscape 
+  isLandscape,
 }) => {
   const responsiveModalStyles = {
     modalContent: {
@@ -50,7 +49,12 @@ export const ScanningTipsModal: React.FC<ScanningTipsModalProps> = ({
           </View>
 
           {/* Do&apos;s and Don&apos;ts */}
-          <View style={[styles.examplesContainer, isLandscape && styles.examplesContainerLandscape]}>
+          <View
+            style={[
+              styles.examplesContainer,
+              isLandscape && styles.examplesContainerLandscape,
+            ]}
+          >
             <View style={styles.exampleColumn}>
               <View style={styles.exampleHeader}>
                 <View style={styles.doIcon}>
@@ -58,7 +62,7 @@ export const ScanningTipsModal: React.FC<ScanningTipsModalProps> = ({
                 </View>
                 <Text style={styles.doText}>Do</Text>
               </View>
-              
+
               <View style={styles.exampleContainer}>
                 <View style={styles.vinExampleGood}>
                   <View style={styles.vinPlate}>
@@ -76,11 +80,13 @@ export const ScanningTipsModal: React.FC<ScanningTipsModalProps> = ({
                 </View>
                 <Text style={styles.dontText}>Don&apos;t</Text>
               </View>
-              
+
               <View style={styles.exampleContainer}>
                 <View style={styles.vinExampleBad}>
                   <View style={[styles.vinPlate, styles.vinPlateAngled]}>
-                    <Text style={[styles.vinNumber, styles.vinNumberBlurry]}>1HGBH41JXMN109186</Text>
+                    <Text style={[styles.vinNumber, styles.vinNumberBlurry]}>
+                      1HGBH41JXMN109186
+                    </Text>
                   </View>
                 </View>
                 <Text style={styles.exampleLabel}>Bad: Blurry or angled</Text>
@@ -92,25 +98,51 @@ export const ScanningTipsModal: React.FC<ScanningTipsModalProps> = ({
           <View style={styles.tipsContainer}>
             <Text style={styles.tipsTitle}>Scanning Tips:</Text>
             <View style={styles.tipsList}>
-              <Text style={styles.tipItem}>• Hold device steady and ensure good lighting</Text>
-              <Text style={styles.tipItem}>• Position VIN fully within the scanning frame</Text>
-              <Text style={styles.tipItem}>• Clean the VIN area of dirt, dust, or debris</Text>
-              <Text style={styles.tipItem}>• Use flashlight feature for better visibility</Text>
-              <Text style={styles.tipItem}>• If scanning fails, try manual entry</Text>
+              <Text style={styles.tipItem}>
+                • Hold device steady and ensure good lighting
+              </Text>
+              <Text style={styles.tipItem}>
+                • Position VIN fully within the scanning frame
+              </Text>
+              <Text style={styles.tipItem}>
+                • Clean the VIN area of dirt, dust, or debris
+              </Text>
+              <Text style={styles.tipItem}>
+                • Use flashlight feature for better visibility
+              </Text>
+              <Text style={styles.tipItem}>
+                • If scanning fails, try manual entry
+              </Text>
             </View>
           </View>
 
           {/* Enhanced Tips for Difficult Conditions */}
           <View style={styles.enhancedTipsContainer}>
-            <Text style={styles.enhancedTipsTitle}>💡 For Glare & Surface Issues:</Text>
+            <Text style={styles.enhancedTipsTitle}>
+              💡 For Glare & Surface Issues:
+            </Text>
             <View style={styles.tipsList}>
-              <Text style={styles.tipItem}>• Angle device to reduce reflections and glare</Text>
-              <Text style={styles.tipItem}>• Try scanning from different positions</Text>
-              <Text style={styles.tipItem}>• Use your body to block direct sunlight</Text>
-              <Text style={styles.tipItem}>• Clean VIN surface with dry cloth if dirty</Text>
-              <Text style={styles.tipItem}>• For metal surfaces: angle to minimize reflection</Text>
-              <Text style={styles.tipItem}>• Toggle flashlight ON/OFF to find best lighting</Text>
-              <Text style={styles.tipItem}>• If auto-scan struggles, use manual capture button</Text>
+              <Text style={styles.tipItem}>
+                • Angle device to reduce reflections and glare
+              </Text>
+              <Text style={styles.tipItem}>
+                • Try scanning from different positions
+              </Text>
+              <Text style={styles.tipItem}>
+                • Use your body to block direct sunlight
+              </Text>
+              <Text style={styles.tipItem}>
+                • Clean VIN surface with dry cloth if dirty
+              </Text>
+              <Text style={styles.tipItem}>
+                • For metal surfaces: angle to minimize reflection
+              </Text>
+              <Text style={styles.tipItem}>
+                • Toggle flashlight ON/OFF to find best lighting
+              </Text>
+              <Text style={styles.tipItem}>
+                • If auto-scan struggles, use manual capture button
+              </Text>
             </View>
           </View>
 
@@ -314,4 +346,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScanningTipsModal; 
+export default ScanningTipsModal;

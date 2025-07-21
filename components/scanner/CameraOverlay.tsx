@@ -1,39 +1,9 @@
-/**
- * PROPRIETARY SOFTWARE - CameraOverlay
- * Copyright (c) 2025 VisiblePaths Inc. All rights reserved.
- * 
- * This file contains proprietary code and business logic.
- * Unauthorized copying, modification, distribution, or use is strictly prohibited.
- * 
- * Digital Fingerprint: VIN-SCANNER-CAMERAOVERLAY-2025
- * License: Proprietary - See LICENSE file for full terms
- */
-
-/**
- * PROPRIETARY SOFTWARE - CameraOverlay
- * Copyright (c) 2024 [Your Company Name]. All rights reserved.
- * 
- * This file contains proprietary code and business logic.
- * Unauthorized copying, modification, distribution, or use is strictly prohibited.
- * 
- * Digital Fingerprint: VIN-SCANNER-CAMERAOVERLAY-2024
- * License: Proprietary - See LICENSE file for full terms
- */
-
-/**
- * @component CameraOverlay
- * @description UI overlay for camera view with controls and scanning frame
- * @props CameraOverlayProps - Configuration for overlay elements and callbacks
- * @returns JSX.Element - Overlay UI components positioned over camera view
- */
-
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useOrientation } from '../../hooks/useOrientation';
 import { ScanningFrame } from '../ui/ScanningFrame';
 
-// TypeScript interfaces
 interface CameraOverlayProps {
   // Status and state
   isProcessing: boolean;
@@ -41,7 +11,7 @@ interface CameraOverlayProps {
   hasError: boolean;
   autoScan: boolean;
   torch: boolean;
-  
+
   // Callbacks
   onClose: () => void;
   onHelp: () => void;
@@ -49,7 +19,7 @@ interface CameraOverlayProps {
   onAutoScanToggle: (enabled: boolean) => void;
   onManualEntry: () => void;
   onCapture: () => void;
-  
+
   // Optional customization
   showAutoScanToggle?: boolean;
   showManualEntry?: boolean;
@@ -73,24 +43,25 @@ export const CameraOverlay: React.FC<CameraOverlayProps> = ({
   customInstructions,
 }) => {
   const { isLandscape } = useOrientation();
-  
+
   // Enhanced state management to prevent persistent yellow border
   const [isUIInteracting, setIsUIInteracting] = useState(false);
   const uiTimeoutRef = useRef<number | null>(null);
-  
+
   // More restrictive processing state - only show during actual camera scanning
-  const shouldShowProcessingState = isProcessing && isScanning && !isUIInteracting;
-  
+  const shouldShowProcessingState =
+    isProcessing && isScanning && !isUIInteracting;
+
   // Enhanced UI action handler with better timeout management
   const handleUIAction = (action: () => void) => {
     setIsUIInteracting(true);
     action();
-    
+
     // Clear any existing timeout
     if (uiTimeoutRef.current) {
       clearTimeout(uiTimeoutRef.current);
     }
-    
+
     // Set new timeout with longer delay to prevent flickering
     uiTimeoutRef.current = setTimeout(() => {
       setIsUIInteracting(false);
@@ -101,35 +72,38 @@ export const CameraOverlay: React.FC<CameraOverlayProps> = ({
     <View style={styles.overlay}>
       {/* Top section with status and controls - MOVED HIGHER */}
       <View style={styles.topSection}>
-        <TouchableOpacity 
-          style={styles.closeButton}
-          onPress={onClose}
-        >
-          <Ionicons name="close" size={24} color="white" />
-        </TouchableOpacity>
+        {/* LEFT SIDE - You can leave this empty or restore closeButton if needed */}
+        <View style={{ flex: 0.15 }} />
 
-        <View style={styles.titleContainer}>
-          <View style={[styles.statusDot, 
-            shouldShowProcessingState ? styles.statusDotScanning : 
-            hasError ? styles.statusDotError : styles.statusDotReady
-          ]} />
-          <Text style={styles.titleText}>Scanner</Text>
-          <TouchableOpacity 
-            style={styles.helpButtonInline}
-            onPress={() => handleUIAction(onHelp)}
-          >
-            <Ionicons name="help-circle-outline" size={20} color="white" />
-          </TouchableOpacity>
+        {/* CENTER - Title */}
+        <View style={styles.centerContainer}>
+          <View style={styles.titleContainer}>
+            <View
+              style={[
+                styles.statusDot,
+                shouldShowProcessingState
+                  ? styles.statusDotScanning
+                  : hasError
+                  ? styles.statusDotError
+                  : styles.statusDotReady,
+              ]}
+            />
+            <Text style={styles.titleText}>Scanner</Text>
+            <TouchableOpacity
+              style={styles.helpButtonInline}
+              onPress={() => handleUIAction(onHelp)}
+            >
+              <Ionicons name="help-circle-outline" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <TouchableOpacity 
-          style={styles.torchButton}
-          onPress={onTorchToggle}
-        >
-          <Ionicons 
-            name={torch ? "flashlight" : "flashlight-outline"} 
-            size={24} 
-            color={torch ? "#FFC107" : "white"} 
+        {/* RIGHT SIDE - Torch Button */}
+        <TouchableOpacity style={styles.torchButton} onPress={onTorchToggle}>
+          <Ionicons
+            name={torch ? 'flashlight' : 'flashlight-outline'}
+            size={24}
+            color={torch ? '#FFC107' : 'white'}
           />
         </TouchableOpacity>
       </View>
@@ -138,27 +112,43 @@ export const CameraOverlay: React.FC<CameraOverlayProps> = ({
       <View style={styles.scanningFrameContainer}>
         <ScanningFrame
           type="vin"
-          state={shouldShowProcessingState ? 'scanning' : hasError ? 'error' : 'idle'}
+          state={
+            shouldShowProcessingState ? 'scanning' : hasError ? 'error' : 'idle'
+          }
           isLandscape={isLandscape}
-          processingText={shouldShowProcessingState ? 'Analyzing VIN...' : undefined}
+          processingText={
+            shouldShowProcessingState ? 'Analyzing VIN...' : undefined
+          }
         />
       </View>
 
-
-
       {/* Auto-scan toggle */}
       {showAutoScanToggle && (
-        <View style={isLandscape ? styles.autoScanContainerLandscape : styles.autoScanContainer}>
+        <View
+          style={
+            isLandscape
+              ? styles.autoScanContainerLandscape
+              : styles.autoScanContainer
+          }
+        >
           <TouchableOpacity
-            style={[styles.autoScanToggle, autoScan && styles.autoScanToggleActive]}
+            style={[
+              styles.autoScanToggle,
+              autoScan && styles.autoScanToggleActive,
+            ]}
             onPress={() => onAutoScanToggle(!autoScan)}
           >
-            <Ionicons 
-              name={autoScan ? "scan" : "scan-outline"} 
-              size={20} 
-              color={autoScan ? "#22C55E" : "white"} 
+            <Ionicons
+              name={autoScan ? 'scan' : 'scan-outline'}
+              size={20}
+              color={autoScan ? '#22C55E' : 'white'}
             />
-            <Text style={[styles.autoScanText, autoScan && styles.autoScanTextActive]}>
+            <Text
+              style={[
+                styles.autoScanText,
+                autoScan && styles.autoScanTextActive,
+              ]}
+            >
               {autoScan ? 'Auto-Scan ON' : 'Auto-Scan OFF'}
             </Text>
           </TouchableOpacity>
@@ -171,7 +161,11 @@ export const CameraOverlay: React.FC<CameraOverlayProps> = ({
           // Landscape layout: Compact controls
           <View style={styles.landscapeControlsContainer}>
             <TouchableOpacity
-              style={[styles.captureButton, (shouldShowProcessingState || isScanning) && styles.captureButtonDisabled]}
+              style={[
+                styles.captureButton,
+                (shouldShowProcessingState || isScanning) &&
+                  styles.captureButtonDisabled,
+              ]}
               onPress={onCapture}
               disabled={shouldShowProcessingState || isScanning}
             >
@@ -191,7 +185,11 @@ export const CameraOverlay: React.FC<CameraOverlayProps> = ({
           // Portrait layout: Stacked controls
           <View style={styles.portraitControlsContainer}>
             <TouchableOpacity
-              style={[styles.captureButton, (shouldShowProcessingState || isScanning) && styles.captureButtonDisabled]}
+              style={[
+                styles.captureButton,
+                (shouldShowProcessingState || isScanning) &&
+                  styles.captureButtonDisabled,
+              ]}
               onPress={onCapture}
               disabled={shouldShowProcessingState || isScanning}
             >
@@ -225,11 +223,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topSection: {
-    flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 45, // REDUCED from 60 - moves icons higher
+    width: '100%',
+    paddingTop: 45,
     paddingHorizontal: 20,
     paddingBottom: 30,
   },
@@ -251,12 +249,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 5, // REDUCED from 10 - moves button higher
   },
+  centerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 5, // REDUCED from 10 - moves title higher
+    marginTop: 5,
   },
+
   statusDot: {
     width: 10,
     height: 10,
@@ -291,7 +296,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
 
   autoScanContainer: {
     position: 'absolute',
@@ -404,4 +408,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CameraOverlay; 
+export default CameraOverlay;
